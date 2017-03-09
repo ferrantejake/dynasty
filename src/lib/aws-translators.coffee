@@ -153,9 +153,10 @@ module.exports.putItem = (obj, options, callback) ->
       res[key] = dataTrans.toDynamo(val))
   })
 
-  @parent.dynamo.putItemAsync(awsParams)
-
-
+  @parent.dynamo.putItemAsync(awsParams).then (data)->
+    if data && data.Attributes
+      dataTrans.fromDynamo(data.Attributes)
+  .nodeify(callback)
 module.exports.updateItem = (params, obj, options, callback, keySchema) ->
   key = getKey(params, keySchema)
 
