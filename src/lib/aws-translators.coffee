@@ -146,10 +146,11 @@ module.exports.query = (params, options, callback, keySchema) ->
     .nodeify(callback)
 
 module.exports.putItem = (obj, options, callback) ->
-  awsParams =
+  awsParams = Object.assign(options, {
     TableName: @name
     Item: _.transform(obj, (res, val, key) ->
       res[key] = dataTrans.toDynamo(val))
+  })
 
   @parent.dynamo.putItemAsync(awsParams)
 
