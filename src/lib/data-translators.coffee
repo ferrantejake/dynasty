@@ -80,6 +80,7 @@ toDynamo = (item) ->
     obj =
       'NULL': true
   else if not item
-    throw new TypeError "toDynamo() does not support mapping #{util.inspect(item)}"
+    message = "toDynamo() does not support mapping #{util.inspect(item)}"
+    throw new TypeError message
 
 module.exports.toDynamo = toDynamo
