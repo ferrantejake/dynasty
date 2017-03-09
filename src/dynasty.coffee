@@ -127,10 +127,13 @@ class Dynasty
           Projection:
             ProjectionType: index.projection_type.toUpperCase()
           # Use the provided or default throughput
-          ProvisionedThroughput: unless index.provisioned_throughput? then awsParams.ProvisionedThroughput else {
-            ReadCapacityUnits: index.provisioned_throughput.read
-            WriteCapacityUnits: index.provisioned_throughput.write
-          }
+          ProvisionedThroughput:
+            unless index.provisioned_throughput?
+            then awsParams.ProvisionedThroughput
+            else {
+              ReadCapacityUnits: index.provisioned_throughput.read
+              WriteCapacityUnits: index.provisioned_throughput.write
+            }
         }
         # Add key name to attributeDefinitions
         for type, keys of index.key_schema
