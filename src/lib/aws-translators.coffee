@@ -78,7 +78,8 @@ module.exports.batchGetItem = (params, callback, keySchema) ->
   awsParams = {}
   awsParams.RequestItems = {}
   name = @name
-  awsParams.RequestItems[@name] = Keys: _.map(params, (param) -> getKey(param, keySchema))
+  awsParams.RequestItems[@name] =
+  Keys: _.map(params, (param) -> getKey(param, keySchema))
   @parent.dynamo.batchGetItemAsync(awsParams)
     .then (data) ->
       dataTrans.fromDynamo(data.Responses[name])
@@ -154,12 +155,14 @@ module.exports.putItem = (obj, options, callback) ->
 
   @parent.dynamo.putItemAsync(awsParams)
 
+
 module.exports.updateItem = (params, obj, options, callback, keySchema) ->
   key = getKey(params, keySchema)
 
   # Set up the Expression Attribute Values map.
   expressionAttributeValues = _.mapKeys obj, (value, key) -> return ':' + key
-  expressionAttributeValues = _.mapValues expressionAttributeValues, (value, key) -> return dataTrans.toDynamo value
+  expressionAttributeValues = _.mapValues expressionAttributeValues,
+  (value, key) -> return dataTrans.toDynamo value
 
   # Setup ExpressionAttributeNames mapping key -> #key so we don't bump into
   # reserved words
@@ -167,7 +170,8 @@ module.exports.updateItem = (params, obj, options, callback, keySchema) ->
   expressionAttributeNames["##{key}"] = key for key, i in Object.keys(obj)
 
   # Set up the Update Expression
-  updateExpression = 'SET ' + _.keys(_.mapKeys obj, (value, key) -> "##{key} = :#{key}").join ','
+  updateExpression = 'SET ' + _.keys(_.mapKeys obj,
+  (value, key) -> "##{key} = :#{key}").join ','
 
   awsParams =
     TableName: @name
